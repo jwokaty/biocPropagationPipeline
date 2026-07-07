@@ -89,7 +89,7 @@ prepareView <- function(df) {
         Title = df$Title,
         Description = .wrap_field(df$Description),
         biocViews = df$biocViews,
-        Author = gsub("\n|\\s+", " ", wrap_field(df$Author)),
+        Author = gsub("\n|\\s+", " ", .wrap_field(df$Author)),
         Maintainer = df$Maintainer,
         URL = df$URL,
         VignetteBuilder = df$VignetteBuilder,
@@ -123,12 +123,28 @@ writeView <- function(df, save_path, ext = c("json", "dcf")) {
     .save_as(df, save_path, ext)
 }
 
+#' Read a single package view from JSON file
+#'
+#' @param package Character, package name
+#' @param path Character, directory path where JSON files are stored
+#' @returns List, the package view data
+#' @export
 readView <- function(package, path) {
     jsonlite::read_json(file.path(path, paste0(package, ".json")))
 }
 
-readViews <- function(package_type, save_path, ext = c("json", "dcf")) {
-    pkgs <- getPackagesByType(package_type)
-    views <- lapply(pkgs, function(x) readView(x, save_path))
-    jsonlite::toJSON(views)
+#' Read all package views from directory
+#'
+#' @param path Character, directory path where JSON files are stored
+#' @returns List, all package view data
+#' @export
+readViews <- function(path) {
+    json_files <- list.files(path, pattern = "\\.json$", full.names = FALSE)
+    packages <- gsub("\\.json$", "", json_files)
+    
+    views <- list()
+    for (pkg in packages) {
+        views[[pkg]] <- readView(pkg, path)
+    }
+    views
 }

@@ -9,8 +9,6 @@
 .getFile <- function(file_url, save_path, max_retries = .MAX_TRIES,
                      quiet = TRUE) {
     for (i in 1:max_retries) {
-        curl::curl_download(file_url, save_path, quiet = quiet)
-        
         tryCatch({
             curl::curl_download(file_url, save_path, quiet = quiet)
             return(save_path)
@@ -20,6 +18,7 @@
         })
     }
     message("Failed to download ", file_url)
+    return(NULL)
 }
 
 #' @examples
@@ -27,9 +26,9 @@
 #' getCitation(pkg_url)
 #' 
 #' @export
-getCitation <- function(pkg_url, save_path, ext = "html") {
+getCitation <- function(pkg_url, save_path = NULL, ext = "html") {
     if (is.null(save_path))
-        save_path <- paste("citations", pkg, "citation.html", sep = "/")
+        save_path <- paste("citations", basename(pkg_url), "citation.", ext, sep = "/")
     .getFile(paste(pkg_url, paste0("citation.", ext), sep = "/"),
              save_path)
 }
@@ -39,9 +38,9 @@ getCitation <- function(pkg_url, save_path, ext = "html") {
 #' getLicense(pkg_url)
 #' 
 #' @export
-getLicense <- function(pkg_url, save_path) {
+getLicense <- function(pkg_url, save_path = NULL) {
     if (is.null(save_path))
-        save_path <- paste("licenses", pkg, "LICENSE", sep = "/")
+        save_path <- paste("licenses", basename(pkg_url), "LICENSE", sep = "/")
     .getFile(paste0(pkg_url, "LICENSE"), save_path)
 }
 
@@ -54,13 +53,14 @@ getLicense <- function(pkg_url, save_path) {
 #' getManual(pkg, pkg_url, ext = "pdf")
 #' 
 #' @export
-getManual <- function(pkg, pkg_url, save_path, ext = c("pdf", "html")) {
+getManual <- function(pkg, pkg_url, save_path = NULL, ext = c("pdf", "html")) {
+    ext <- match.arg(ext)
     stem <- paste0(pkg, ".", ext)
     if (is.null(save_path) && ext == "pdf")
         save_path <- paste("manuals", pkg, "refman", stem, sep = "/")
     else if (is.null(save_path) && ext == "html")
         save_path <- paste("manuals", pkg, "man", stem, sep = "/")
-    suffix <-ifelse(ext == "pdf", paste0(pkg, ".pdf"), "doc/manual.html")
+    suffix <- ifelse(ext == "pdf", paste0(pkg, ".pdf"), "doc/manual.html")
     .getFile(paste0(pkg_url, suffix), save_path)
 }
 
@@ -70,9 +70,9 @@ getManual <- function(pkg, pkg_url, save_path, ext = c("pdf", "html")) {
 #' getNews(pkg_url)
 #' 
 #' @export
-getNews <- function(pkg_url, save_path) {
+getNews <- function(pkg_url, save_path = NULL) {
     if (is.null(save_path))
-        save_path <- paste("news", pkg, "NEWS", sep = "/")
+        save_path <- paste("news", basename(pkg_url), "NEWS", sep = "/")
     .getFile(paste0(pkg_url, "NEWS"), save_path)
 }
 
@@ -81,9 +81,9 @@ getNews <- function(pkg_url, save_path) {
 #' getReadme(pkg_url)
 #' 
 #' @export
-getReadme <- function(pkg_url, save_url) {
+getReadme <- function(pkg_url, save_path = NULL) {
     if (is.null(save_path))
-        save_path <- paste("readme", pkg, "readme.html", sep = "/")
+        save_path <- paste("readme", basename(pkg_url), "readme.html", sep = "/")
     .getFile(paste0(pkg_url, "doc/readme.html"), save_path)
 }
 
@@ -94,12 +94,19 @@ getReadme <- function(pkg_url, save_url) {
 #' vignettes <- view$vignettes
 #'
 #' @export
-getVignettes <- function(vignettes, pkg_url, save_path) {
+getVignettes <- function(vignettes, pkg_url, save_path = NULL) {
     if (is.null(save_path))
-        save_path <- paste("vignettes", pkg, "inst/doc", sep = "/")
-    for(vignette in vignettes) {
-        .getFile(paste0(pkg_url, vignette),
-                 paste(save_path, vignette, sep = "/"))
+        save_path <- paste("vignettes", basename(pkg_url), "inst/doc", sep = "/")
+    
+    # Ensure save_path directory exists
+    if (!dir.exists(dirname(save_path))) {
+        dir.create(dirname(save_path), recursive = TRUE)
+    }
+    
+    for (vignette in vignettes) {
+        vignette_file <- basename(vignette)
+        dest_path <- file.path(save_path, vignette_file)
+        .getFile(paste0(pkg_url, vignette), dest_path)
     }
 }
 
