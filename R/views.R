@@ -264,8 +264,8 @@ write_package_views <- function(packages_df, branch, bioc_version, package_type,
     git_branch <- .get_branch(branch, bioc_version)
     updated <- 0L
     for (i in seq_len(n)) {
-        pkg_row <- packages_df[i, ]
-        pkg_row[] <- lapply(pkg_row, function(col) {
+        pkg_row <- as.list(packages_df[i, ])
+        pkg_row <- lapply(pkg_row, function(col) {
             if (is.list(col))
                 col[[1]]
             else

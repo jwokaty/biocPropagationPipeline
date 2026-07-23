@@ -64,7 +64,8 @@
     any(
         grepl(
             a_file,
-            x
+            x,
+            ignore.case = TRUE
         )
     )
 }

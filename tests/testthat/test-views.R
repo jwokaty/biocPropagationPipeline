@@ -95,15 +95,11 @@ test_that("write_package_views writes a file read_view can find (regression: no 
         RemoteSha = row$RemoteSha, UnsupportedPlatforms = NA,
         stringsAsFactors = FALSE
     )
-    # a single-row dependency table, since write_package_views()'s
-    # row-flattening step only supports one row per list-column cell
-    packages_df$`_dependencies` <- list(row$`_dependencies`[1, , drop = FALSE])
+    packages_df$`_dependencies` <- list(row$`_dependencies`)
     packages_df$`_upstream` <- row$`_upstream`
     packages_df$`Date/Publication` <- row$`Date/Publication`
     packages_df$`_vignettes` <- list(row$`_vignettes`)
-    # a single asset, since write_package_views()'s row-flattening step
-    # only supports one value per list-column cell
-    packages_df$`_assets` <- list(row$`_assets`[1])
+    packages_df$`_assets` <- list(row$`_assets`)
 
     updated <- write_package_views(packages_df, "devel", "3.19", "software")
 
@@ -113,6 +109,10 @@ test_that("write_package_views writes a file read_view can find (regression: no 
 
     round_tripped <- read_view("TestPkg", file.path("devel", "software"))
     expect_equal(round_tripped$Package[[1]], "TestPkg")
+    expect_equal(round_tripped$Depends[[1]], "R (4.0.0)")
+    expect_equal(round_tripped$Imports[[1]], "methods, stats")
+    expect_true(round_tripped$hasREADME[[1]])
+    expect_true(round_tripped$hasNEWS[[1]])
 })
 
 test_that("view_to_row wraps every field as a length-1 list-column", {

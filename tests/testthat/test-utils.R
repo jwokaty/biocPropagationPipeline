@@ -39,14 +39,13 @@ test_that(".get_branch maps release versions and passes through devel", {
     expect_equal(.get_branch("devel", "3.20"), "devel")
 })
 
-test_that(".has detects file presence case-sensitively and handles empty input", {
+test_that(".has detects file presence case-insensitively and handles empty input", {
     assets <- c("readme.md", "news.txt", "LICENSE")
 
     expect_true(.has(assets, "readme.md"))
     expect_false(.has(assets, "vignette.html"))
     expect_identical(.has(character(0), "readme.md"), NA_character_)
-    # .has() is case-sensitive: an upper-case filename will not match
-    expect_false(.has(c("README.md"), "readme.md"))
+    expect_true(.has(c("README.md"), "readme.md"))
 })
 
 test_that(".save_as writes json and dcf files", {
