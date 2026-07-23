@@ -21,6 +21,7 @@ Imports:
     jsonlite,
     logger,
     purrr,
+    tibble,
     utils
 Suggests:
     BiocStyle,
