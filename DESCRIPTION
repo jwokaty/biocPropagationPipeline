@@ -17,6 +17,7 @@ Imports:
     biocUniTools,
     curl,
     dplyr,
+    git2r,
     jsonlite,
     logger,
     purrr,
