@@ -2,7 +2,7 @@
 % Please edit documentation in R/views.R
 \name{write_package_views}
 \alias{write_package_views}
-\title{Update the views for passed packages of a package_type}
+\title{Write package views}
 \usage{
 write_package_views(
   packages_df,
@@ -27,5 +27,11 @@ write_package_views(
 integer number of views updated
 }
 \description{
-Update the views for passed packages of a package_type
+Write package views
+}
+\examples{
+bu <- biocUniTools::uni_for_bioc("devel")
+packages_df <- biocUniTools::get_raw_uni_df(bu$universe)
+write_package_views(packages_df, bu$bioc_branch, bu$bioc_version, "software")
+
 }

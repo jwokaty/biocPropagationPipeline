@@ -22,6 +22,12 @@
     return(NULL)
 }
 
+#' Get citation
+#'
+#' @param pkg_url character R Universe URL for the package
+#' @param save_path character (default: NULL) save path
+#' @param ext character (default: html)
+#'
 #' @examples
 #' pkg_url <- .runiverse_url("BiocCheck", "devel")
 #' get_citation(pkg_url)
@@ -33,6 +39,11 @@ get_citation <- function(pkg_url, save_path = NULL, ext = "html") {
     .get_file(file.path(pkg_url, paste0("citation.", ext)), save_path)
 }
 
+#' Get license
+#'
+#' @param pkg_url character R Universe URL for the package
+#' @param save_path character (default: NULL) save path
+#'
 #' @examples
 #' pkg_url <- .runiverse_url("BiocCheck", "devel")
 #' get_license(pkg_url)
@@ -44,6 +55,12 @@ get_license <- function(pkg_url, save_path = NULL) {
     .get_file(file.path(pkg_url, "LICENSE"), save_path)
 }
 
+#' Get manual
+#'
+#' @param pkg character package name
+#' @param pkg_url character R Universe URL for the package
+#' @param save_path character (default: NULL) save path
+#' @param ext character (default: c("pdf", "html"))
 #'
 #' @details Packages should be placed along the following paths where pkg is
 #' the package name:
@@ -71,6 +88,11 @@ get_manual <- function(pkg, pkg_url, save_path = NULL, ext = c("pdf", "html")) {
 }
 
 
+#' Get NEWS
+#'
+#' @param pkg_url character R Universe URL for the package
+#' @param save_path character (default: NULL) save path
+#'
 #' @examples
 #' pkg_url <- .runiverse_url("BiocCheck", "devel")
 #' get_news(pkg_url)
@@ -82,6 +104,11 @@ get_news <- function(pkg_url, save_path = NULL) {
     .get_file(file.path(pkg_url, "NEWS"), save_path)
 }
 
+#' Get README
+#'
+#' @param pkg_url character R Universe URL for the package
+#' @param save_path character (default: NULL) save path
+#'
 #' @examples
 #' pkg_url <- .runiverse_url("BiocCheck", "devel")
 #' get_readme(pkg_url)
@@ -93,6 +120,12 @@ get_readme <- function(pkg_url, save_path = NULL) {
     .get_file(file.path(pkg_url, "doc/readme.html"), save_path)
 }
 
+#' Get vignettes
+#'
+#' @param pkg_url character R Universe URL for the package
+#' @param vignettes list paths to vignettes
+#' @param save_path character (default: NULL) save path
+#'
 #' @examples
 #' pkg_url <- .runiverse_url("BiocCheck", "devel")
 #' df <- get_ruData("BiocCheck", "devel")
@@ -116,8 +149,13 @@ get_vignettes <- function(pkg_url, vignettes, save_path = NULL) {
     }
 }
 
+#' Get manual
+#'
+#' @param view data.frame package information
+#' @param branch character "devel" or "release"
+#'
 #' @export
-getArtifacts <- function(view, branch) {
+get_artifacts <- function(view, branch) {
     pkg_url <- .runiverse_url(view$Package, branch)
     get_citation(pkg_url)
     get_license(pkg_url)
@@ -126,4 +164,5 @@ getArtifacts <- function(view, branch) {
     get_news(pkg_url)
     get_readme(pkg_url)
     get_vignettes(pkg_url, view$assets)
+    invisible(TRUE) # return something useful?
 }

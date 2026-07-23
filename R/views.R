@@ -239,7 +239,7 @@ write_view <- function(df, save_path, ext = c("json", "dcf")) {
     .save_as(df, file.path("views", save_path), ext)
 }
 
-#' Update the views for passed packages of a package_type
+#' Write package views
 #'
 #' @param packages_df data.frame of passed package information
 #' @param branch character "release" or "devel"
@@ -250,7 +250,11 @@ write_view <- function(df, save_path, ext = c("json", "dcf")) {
 #' @returns integer number of views updated
 #'
 #' @examples
-#' 
+#' bu <- biocUniTools::uni_for_bioc("devel")
+#' packages_df <- biocUniTools::get_raw_uni_df(bu$universe)
+#' write_package_views(packages_df, bu$bioc_branch, bu$bioc_version, "software")
+#'
+#' @export 
 write_package_views <- function(packages_df, branch, bioc_version, package_type,
                                 verbose = FALSE) {
     n <- nrow(packages_df)
@@ -270,8 +274,7 @@ write_package_views <- function(packages_df, branch, bioc_version, package_type,
 
         view <- package_view(pkg_row, git_branch)
         branch <- ifelse(branch == "devel", "devel", "release")
-        save_path <- file.path(branch, package_type,
-                              paste0(pkg_row$Package, ".json"))
+        save_path <- file.path(branch, package_type, pkg_row$Package)
         write_view(view, save_path, "json")
         if (verbose)
             logger::log_info(paste("Updated", save_path))
@@ -283,6 +286,19 @@ write_package_views <- function(packages_df, branch, bioc_version, package_type,
     updated
 }
 
+#' Update the views for passed packages of a package_type
+#'
+#' @param manifest_url character (default: .MANIFEST_URL) 
+#' @param os character or vector of "linux", "mac", "win", etc
+#' @param branch character or vector in .BRANCHES
+#' @param package_type character or vector in .PACKAGE_TYPES 
+#'
+#' @returns vector of characters paths to the package_type VIEWS 
+#'
+#' @examples
+#' update_package_type_views()
+#'
+#' @export 
 update_package_type_views <- function(manifest_url = .MANIFEST_URL,
                                       os = .OS, branch = .BRANCHES,
                                       package_type = .PACKAGE_TYPES) {
