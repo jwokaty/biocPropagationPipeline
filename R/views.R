@@ -67,9 +67,11 @@ package_view <- function(df, git_branch) {
 #'
 #' @export
 read_view <- function(package, path) {
-    if (!grepl(".json", path))
-        path <- file.path(path, paste0(package, ".json"))
-    jsonlite::read_json(file.path("views", path))
+    package_view_path <- file.path("views", path)
+    if (!grepl(".json", package_view_path))
+        package_view_path <- file.path(package_view_path, paste0(package, ".json"))
+    logger::log_info("read_view({package_view_path})")
+    jsonlite::read_json(package_view_path)
 }
 
 #' Wrap every field of a view as a length-1 list-cell so all views
@@ -277,7 +279,7 @@ write_package_views <- function(packages_df, branch, bioc_version, package_type,
         save_path <- file.path(branch, package_type, pkg_row$Package)
         write_view(view, save_path, "json")
         if (verbose)
-            logger::log_info(paste("Updated", save_path))
+            logger::log_info("Updated {save_path}")
         updated <- updated + 1L
     }
 
@@ -306,9 +308,12 @@ update_package_type_views <- function(manifest_url = .MANIFEST_URL,
     for (b in branch) {
         packages_by_type <- read_manifest(manifest_url = manifest_url, b)
         bu <- biocUniTools::uni_for_bioc(b)
+        logger::log_info("Universe: {bu$universe}")
         raw_universe_df <- biocUniTools::get_raw_uni_df(bu$universe)
         for (pt in package_type) {
+            logger::log_info("Package type: {package_type}")
             packages <- packages_by_type[[pt]][, "Package"]
+            logger::log_info("Packages: {packages}")
             views <- read_package_views(b, pt)
             raw_universe_df <- biocUniTools::get_raw_uni_df(bu$universe)
             missing <- setdiff(packages, raw_universe_df$Package)
