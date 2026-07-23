@@ -19,8 +19,14 @@ update the repository.
 ```
 biocPropagationPipeline/
 ├── R/                          # Pipeline code
-├── devel/                      # Devel package.view files + VIEWS.json
-├── release/                    # Release package.view filess + VIEWS.json
+├── views/
+|   ├── devel/                      # devel <package_type>/package.view files + VIEWS.json
+|       ├── books/
+|       ├── data-annotation/
+|       ├── data-experiment/
+|       ├── software/
+|       ├── workflows/
+|   ├── release/
 ├── .github/workflows/          # GitHub Actions workflows
 ├── tests/                      # Test scripts
 └── README.md
