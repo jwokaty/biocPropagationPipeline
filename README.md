@@ -21,11 +21,11 @@ biocPropagationPipeline/
 ├── R/                          # Pipeline code
 ├── views/
 |   ├── devel/                      # devel <package_type>/package.view files + VIEWS.json
-|       ├── books/
-|       ├── data-annotation/
-|       ├── data-experiment/
-|       ├── software/
-|       ├── workflows/
+|   |   ├── books/
+|   |   ├── data-annotation/
+|   |   ├── data-experiment/
+|   |   ├── software/
+|   |   ├── workflows/
 |   ├── release/
 ├── .github/workflows/          # GitHub Actions workflows
 ├── tests/                      # Test scripts
