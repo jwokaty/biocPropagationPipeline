@@ -26,6 +26,14 @@ jobs:
         with:
           r-version: 'release'
 
+      - name: Pre-install Bioconductor dependencies
+        run: |
+          if (!requireNamespace("BiocManager", quietly = TRUE))
+              install.packages("BiocManager")
+          options(repos = BiocManager::repositories())
+          BiocManager::install("BiocBaseUtils", update = FALSE, ask = FALSE)
+        shell: Rscript {0}
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           needs: Imports
