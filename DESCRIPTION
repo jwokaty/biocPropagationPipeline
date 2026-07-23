@@ -1,0 +1,35 @@
+Package: biocPropagationPipeline 
+Title: Bioconductor propagation pipeline 
+Version: 0.0.99
+Authors@R: c(
+    person("Andres", "Wokaty", , "andres.wokaty@sph.cuny.edu", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0008-0900-8793"))
+  )
+Description: Bioconductor propagation pipeline 
+URL: https://github.com/Bioconductor/biocPropagationPipeline
+BugReports: https://github.com/Bioconductor/biocPropagationPipeline/issues
+biocViews: Infrastructure
+License: Artistic License 2.0
+Depends:
+    R (>= 4.6.0)
+Imports:
+    BiocPropagate,
+    biocUniTools,
+    curl,
+    dplyr,
+    jsonlite,
+    logger,
+    purrr,
+    utils
+Suggests:
+    BiocStyle,
+    knitr,
+    testthat (>= 3.0.0)
+Remotes:
+    Bioconductor/BiocPropagate,
+    Bioconductor/biocUniTools
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr
+Config/testthat/edition: 4
+Config/roxygen2/version: 8.0.0
