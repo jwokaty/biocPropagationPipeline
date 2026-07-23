@@ -1,0 +1,58 @@
+name: Update package views
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '17 */6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-package-type-views
+  cancel-in-progress: false
+
+jobs:
+  update-views:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: views
+          fetch-depth: 1
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          needs: Imports
+          cache: true
+
+      - name: Install biocPropagationPipeline
+        run: R CMD INSTALL --no-build-vignettes --no-multiarch .
+        shell: bash
+
+      - name: Ensure views directory structure exists
+        run: |
+          set -euo pipefail
+          for branch in devel release; do
+            for package_type in software data-annotation data-experiment workflows books; do
+              mkdir -p "views/${branch}/${package_type}"
+            done
+          done
+        shell: bash
+
+      - name: Update views
+        run: Rscript -e 'biocPropagationPipeline::update_package_type_views()'
+        shell: bash
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update package views [skip ci]"
+          file_pattern: 'views/**'
+          branch: views
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
