@@ -166,6 +166,19 @@ test_that("read_package_views reads and combines all JSON views in a directory",
     expect_equal(vapply(views$Package, `[[`, character(1), 1), c("Alpha", "Beta"))
 })
 
+test_that("read_package_views returns an empty typed data.frame if no views", {
+    tmp_dir <- tempfile("views-test-")
+    view_dir <- file.path(tmp_dir, "views", "devel", "software")
+    dir.create(view_dir, recursive = TRUE)
+    old_wd <- setwd(tmp_dir)
+    on.exit({ setwd(old_wd); unlink(tmp_dir, recursive = TRUE) }, add = TRUE)
+
+    views <- read_package_views("devel", "software")
+
+    expect_equal(nrow(views), 0)
+    expect_true(all(c("Package", "git_last_commit") %in% names(views)))
+})
+
 test_that("changed_packages flags packages missing from or stale vs. views", {
     views <- data.frame(
         Package = c("Alpha", "Beta"),
@@ -184,12 +197,19 @@ test_that("changed_packages flags packages missing from or stale vs. views", {
     expect_false("Alpha" %in% changed)
 })
 
-test_that("changed_packages returns empty when there are no views", {
-    empty_views <- data.frame(Package = character(), git_last_commit = character())
-    universe_df <- data.frame(Package = "Alpha", RemoteSha = "abcdef1000000000",
+test_that("changed_packages treats all packages as changed if no views", {
+    empty_views <- data.frame(Package = character(),
+                              git_last_commit = character(),
                               stringsAsFactors = FALSE)
+    universe_df <- data.frame(
+        Package = c("Alpha", "Beta"),
+        RemoteSha = c("abcdef1000000000", "1234567000000000"),
+        stringsAsFactors = FALSE
+    )
 
-    expect_equal(changed_packages(empty_views, universe_df), c())
+    changed <- changed_packages(empty_views, universe_df)
+
+    expect_setequal(changed, c("Alpha", "Beta"))
 })
 
 test_that("changed_packages errors when views lack git_last_commit", {
