@@ -112,13 +112,13 @@ simplify_columns <- function(df) {
 #' @export
 read_package_views <- function(branch, package_type) {
     file_path <- file.path(branch, package_type)
-
     json_files <- list.files(file.path("views", file_path),
                              pattern = "\\.json")
+
     if (length(json_files) == 0)
         return(data.frame(Package = character(),
                           git_last_commit = character(),
-                          stringAsFactors = FALSE))
+                          stringsAsFactors = FALSE))
 
     views <- json_files |>
         purrr::map(~ read_view(gsub(".json", "", .x), file_path))
